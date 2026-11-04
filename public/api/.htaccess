@@ -1,0 +1,5 @@
+# Keep internals private. Only contact.php, reviews.php, review-submit.php and admin.php are public.
+<FilesMatch "^(_bootstrap\.php|seed-reviews\.php|config\.php|config\.sample\.php)$">
+  Require all denied
+</FilesMatch>
+Options -Indexes

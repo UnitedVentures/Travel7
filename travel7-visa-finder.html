@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Travel7 Visa Finder</title>
+<style>
+:root{--navy:#0b2a4a;--gold:#c9a24b;--bg:#ffffff;--card:#fff;--tx:#1b2430;--mut:#667085;--bd:#e2e6ec;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+
+
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--navy);color:#fff;padding:22px 16px 26px;border-bottom:4px solid var(--gold)}
+.w{max-width:960px;margin:0 auto}
+header h1{margin:0;font-size:22px}header h1 span{color:var(--gold)}header p{margin:4px 0 14px;color:#c8d3e0;font-size:14px}
+#q{width:100%;padding:13px 16px;font-size:16px;border-radius:10px;border:2px solid transparent;background:#fff;color:#1b2430}
+#q:focus{outline:none;border-color:var(--gold)}
+main{padding:18px 16px 40px}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;font:inherit;color:var(--tx)}
+.c:hover{border-color:var(--gold)}.c b{display:block;font-size:26px}
+.none{color:var(--mut);padding:20px 0}
+#det{display:none}
+.back{background:none;border:0;color:var(--mut);cursor:pointer;font:inherit;padding:0 0 10px}
+.tabs{display:flex;gap:8px;margin:10px 0 14px}
+.tab{flex:1;padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:600 15px inherit;cursor:pointer}
+.tab.on{background:var(--navy);color:#fff;border-color:var(--gold)}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(11,42,74,.08)}
+.box h3{margin:0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#8a6a12}
+.k{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.k div small{display:block;color:var(--mut)}.k div b{font-size:17px}
+table{width:100%;border-collapse:collapse}td{padding:6px 0;border-bottom:1px solid var(--bd)}td:last-child{text-align:right;font-weight:600}
+ul{margin:0;padding:0;list-style:none}li{padding:5px 0 5px 26px;position:relative}li:before{content:"☐";position:absolute;left:0;color:var(--gold)}
+.tot{background:var(--navy);color:#fff;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.tot b{color:var(--gold)}
+.act{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.btn{padding:11px 18px;border-radius:10px;border:0;background:var(--gold);color:#1b1500;font:600 15px inherit;cursor:pointer}
+.btn.s{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.note{color:var(--mut);font-size:12.5px;margin-top:14px}
+.pdfl{display:inline-block;margin-top:12px;text-decoration:none}
+#ph{display:none;text-align:center;border-bottom:3px solid var(--gold);margin-bottom:12px}
+@media print{header,.tabs,.act,.back,.note,.pdfl{display:none}#ph{display:block}body{background:#fff;color:#000}.box{break-inside:avoid;border-color:#bbb}}
+</style></head><body>
+<header><div class="w"><h1>Travel<span>7</span> Visa Finder</h1><p>Sri Lankan passport holders · Tourist &amp; Business visa requirements</p>
+<input id="q" type="search" placeholder="Search country (e.g. United Kingdom, Schengen, Canada)…" autocomplete="off"></div></header>
+<main><div class="w">
+<div id="list"><div id="grid"></div><div class="none" id="none" hidden>No country found. Add it in the DATA section of the page (see note below).</div></div>
+<div id="det">
+<button class="back" id="back">← All countries</button>
+<div id="ph"><h2 style="margin:0">Travel7 (Pvt) Ltd</h2><div>Colombo 07, Sri Lanka</div></div>
+<h2 id="cn" style="margin:0"></h2>
+<div class="tabs"><button class="tab on" data-t="T">Tourist</button><button class="tab" data-t="B">Business</button></div>
+<div id="out"></div>
+<div class="act"><button class="btn" id="pr">Download / Print PDF</button><button class="btn s" id="cp">Copy for WhatsApp</button>
+<label><input type="checkbox" id="hf" checked> Include our handling fee</label></div>
+</div>
+<p class="note">Indicative figures for reference only — always confirm current fees, checklists and processing times with the embassy / VFS before quoting a client. To add or edit a country, change the DATA list at the top of the page script; each country is one short block.</p>
+</div></main>
+<script>
+// ===== DATA — edit here. Per country: flag, tourist (t) & business (b): time, fee, extra costs, handling fee (LKR), checklist =====
+const COMMON=["Passport valid 6+ months, with 2 blank pages","Completed application form","Recent passport-size photographs","Bank statements – last 6 months","Employment letter + approved leave letter (or business registration)","Travel itinerary and accommodation bookings","Copy of NIC and civil documents (as required)"];
+const BIZ=["Invitation letter from host company","Company registration, tax and business profile","Letter from employer stating purpose and duration of trip"];
+const D={
+"United Kingdom":{f:"🇬🇧",
+ t:{time:"About 3 weeks (15 working days)",fee:"£127 (Standard Visitor, up to 6 months)",x:[["VFS service charge","LKR 8,000 (approx.)"],["Courier return","LKR 1,500"]],h:15000,docs:COMMON.concat(["Previous UK / travel history, if any"]),pdf:"https://unitedventuressl-my.sharepoint.com/:b:/g/personal/visas_travel7lanka_com/IQAsx2bhdJfWR7z3cijW88CwAdbDPS8dS7TGP6dZYfNC7vk?e=khOp1S"},
+ b:{time:"About 3 weeks (15 working days)",fee:"£127 (Standard Visitor, business activities)",x:[["VFS service charge","LKR 8,000 (approx.)"],["Courier return","LKR 1,500"]],h:18000,docs:COMMON.concat(BIZ),pdf:"https://unitedventuressl-my.sharepoint.com/:b:/g/personal/visas_travel7lanka_com/IQA8kc1o9i0cSrv6m6K2S2bUAfUNfO9Uoq20m4lvpEpeBtY?e=CRcBaW"}},
+"Schengen (Europe)":{f:"🇪🇺",
+ t:{time:"15 days (can extend up to 45)",fee:"€90 (adults)",x:[["Service charge (VFS / TLS)","≈ €30"],["Travel insurance (min. €30,000)","LKR 6,000–10,000"],["Hotel booking arrangement","LKR 4,000–10,000"]],h:15000,docs:COMMON.concat(["Travel insurance covering all Schengen states","Return flight reservation"])},
+ b:{time:"15 days (can extend up to 45)",fee:"€90 (adults)",x:[["Service charge (VFS / TLS)","≈ €30"],["Travel insurance (min. €30,000)","LKR 6,000–10,000"]],h:18000,docs:COMMON.concat(["Travel insurance covering all Schengen states","Return flight reservation"],BIZ)}},
+"Canada":{f:"🇨🇦",
+ t:{time:"Varies – typically 4 to 10 weeks",fee:"CAD 100 (Visitor Visa)",x:[["Biometrics fee","CAD 85"],["VAC service charge","LKR 5,000 (approx.)"]],h:20000,docs:COMMON.concat(["Proof of ties to Sri Lanka (property / family / job)","Purpose-of-visit letter"]),pdf:"https://unitedventuressl-my.sharepoint.com/:b:/g/personal/visas_travel7lanka_com/IQBYz9P-lY1pR7JiG0lJ2PCCAUhkVQ642QJ82PsldV_-Arc?e=ESoiaE"},
+ b:{time:"Varies – typically 4 to 10 weeks",fee:"CAD 100 (Visitor Visa)",x:[["Biometrics fee","CAD 85"],["VAC service charge","LKR 5,000 (approx.)"]],h:22000,docs:COMMON.concat(BIZ),pdf:"https://unitedventuressl-my.sharepoint.com/:b:/g/personal/visas_travel7lanka_com/IQA9WgIZOaV3S6B_a4VuWfXmAZfaFJ8Ahshj9PkT1uBj5V8?e=DY88js"}},
+"USA":{f:"🇺🇸",
+ t:{time:"Depends on interview appointment wait time",fee:"USD 185 (B-2 Tourist)",x:[["DS-160 form preparation","LKR 5,000"],["Other US-government fees, if applicable","Check current rules"]],h:20000,docs:COMMON.concat(["DS-160 confirmation page","Interview appointment confirmation"])},
+ b:{time:"Depends on interview appointment wait time",fee:"USD 185 (B-1 Business)",x:[["DS-160 form preparation","LKR 5,000"],["Other US-government fees, if applicable","Check current rules"]],h:22000,docs:COMMON.concat(["DS-160 confirmation page","Interview appointment confirmation"],BIZ)}},
+"Australia":{f:"🇦🇺",
+ t:{time:"About 3 to 6 weeks",fee:"AUD 200 (Visitor 600)",x:[["Biometrics (if requested)","AUD 0 – check"],["Medical (if requested)","Panel doctor fee"]],h:18000,docs:COMMON.concat(["Proof of funds and ties to Sri Lanka"]),pdf:"https://unitedventuressl-my.sharepoint.com/:b:/g/personal/visas_travel7lanka_com/IQDBbzTLPYf3TpLQAG1Ct_acAYjrwXHeOlZ6Tyh6HlcTlLY?e=xissn2"},
+ b:{time:"About 3 to 6 weeks",fee:"AUD 200 (Visitor 600 – Business)",x:[["Medical (if requested)","Panel doctor fee"]],h:20000,docs:COMMON.concat(BIZ),pdf:"https://unitedventuressl-my.sharepoint.com/:b:/g/personal/visas_travel7lanka_com/IQBZhrpWj8iVS4DTFtymHyIxARG8-6JPOUZRlqpfUn9rE7Y?e=iOfpI6"}}
+};
+// ===== END DATA =====
+const $=id=>document.getElementById(id);let cur=null,tp="T";
+const L=n=>"LKR "+n.toLocaleString("en-US");
+function grid(){const s=$("q").value.trim().toLowerCase();$("det").style.display="none";$("list").style.display="";
+ const ks=Object.keys(D).filter(k=>k.toLowerCase().includes(s));
+ $("grid").innerHTML=ks.map(k=>`<button class="c" data-k="${k}"><b>${D[k].f}</b>${k}</button>`).join("");$("none").hidden=ks.length>0}
+const V=/VFS|VAC|service charge/i;
+function show(){const d=D[cur][tp.toLowerCase()],inc=$("hf").checked,v=d.x.find(r=>V.test(r[0])),o=d.x.filter(r=>r!==v);
+ $("cn").textContent=D[cur].f+" "+cur+" – "+(tp=="T"?"Tourist":"Business")+" Visa";
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t==tp));
+ $("out").innerHTML=`<div class="box"><div class="k"><div><small>Processing time (after submission)</small><b>${d.time}</b></div><div><small>Visa fee</small><b>${d.fee}</b></div><div><small>VFS service fee</small><b>${v?v[1]:"To be confirmed"}</b></div></div></div>
+ 
+ <div class="box"><h3>Other additional costs</h3><table>${(o.length?o:[["None","—"]]).map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table></div>
+ ${inc?`<div class="tot"><span>Travel7 handling fee</span><b>${L(d.h)}</b></div>`:""}<div class="box" style="margin-top:12px"><h3>Travel7 processing time</h3><b>2 to 4 working days</b> for our handling, depending on workload and urgency.</div><div class="box"><h3>Visa checklist</h3>${d.pdf?`<a class="btn pdfl" href="${d.pdf}" target="_blank" rel="noopener">Download checklist PDF</a>`:`<div class="note">Checklist PDF coming soon</div>`}</div>`}
+function pick(k){cur=k;tp="T";$("list").style.display="none";$("det").style.display="block";show();scrollTo(0,0)}
+$("grid").onclick=e=>{const b=e.target.closest(".c");if(b)pick(b.dataset.k)};
+$("q").oninput=grid;$("back").onclick=grid;$("hf").onchange=show;$("pr").onclick=()=>print();
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tp=b.dataset.t;show()});
+$("cp").onclick=()=>{const d=D[cur][tp.toLowerCase()],inc=$("hf").checked;
+ const t=`*${cur} – ${tp=="T"?"Tourist":"Business"} Visa* (Travel7)\n\nProcessing time: ${d.time}\nVisa fee: ${d.fee}\nVFS service fee: ${(d.x.find(r=>V.test(r[0]))||[0,"To be confirmed"])[1]}\n\n*Other additional costs*\n${d.x.filter(r=>!V.test(r[0])).map(r=>"• "+r[0]+": "+r[1]).join("\n")}\n\n*Travel7 processing time:* 2 to 4 working days (depending on workload and urgency)${d.pdf?"\n\n*Checklist PDF:* "+d.pdf:""}`+(inc?`\n\n*Travel7 handling fee:* ${L(d.h)}`:"");
+ const ok=()=>{$("cp").textContent="Copied ✓";setTimeout(()=>$("cp").textContent="Copy for WhatsApp",1800)};
+ const fb=()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");ok()}catch(e){}a.remove()};
+ navigator.clipboard?navigator.clipboard.writeText(t).then(ok,fb):fb()};
+grid();
+</script></body></html>
